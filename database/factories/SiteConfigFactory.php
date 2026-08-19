@@ -2,6 +2,7 @@
 
 namespace Database\Factories;
 
+use App\Enums\SiteConfigKeyEnum;
 use App\Models\SiteConfig;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
@@ -17,8 +18,13 @@ class SiteConfigFactory extends Factory
      */
     public function definition(): array
     {
+        $key = fake()->randomElement(SiteConfigKeyEnum::cases());
+
         return [
-            //
+            'key' => $key->value,
+            'value' => fake()->sentence(),
+            'info' => $key->getInfo(),
+            'is_active' => true,
         ];
     }
 }
