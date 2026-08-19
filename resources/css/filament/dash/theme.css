@@ -1,0 +1,33 @@
+@import '../../../../vendor/filament/filament/resources/css/theme.css';
+
+/* O tema do Filament usa `source(none)`: todas as origens precisam ser declaradas.
+   Equivale ao `content` do tailwind.config.js que existia no Tailwind 3. */
+@source '../../../../app/Filament/**/*';
+@source '../../../../resources/views/filament/**/*';
+@source '../../../../vendor/filament/**/*.blade.php';
+@source '../../../../vendor/diogogpinto/filament-auth-ui-enhancer/resources/**/*.blade.php';
+@source '../../../../vendor/bezhansalleh/filament-shield/resources/**/*.blade.php';
+@source '../../../../vendor/joaopaulolndev/filament-edit-profile/resources/**/*.blade.php';
+@source '../../../../vendor/shuvroroy/filament-spatie-laravel-health/resources/**/*.blade.php';
+@source '../../../../vendor/dutchcodingcompany/filament-developer-logins/resources/**/*.blade.php';
+@source '../../../../vendor/rawilk/filament-password-input/resources/**/*.blade.php';
+
+/* Container de schema — era .fi-fo-component-ctn no Filament 3 */
+.fi-sc {
+    @apply gap-y-3 gap-x-5;
+}
+
+/* Wrapper de campo — era .fi-fo-field-wrp no Filament 3 */
+.fi-fo-field > div.grid {
+    @apply gap-y-px;
+}
+
+.fi-fo-checkbox-list .break-inside-avoid {
+    @apply pt-1;
+}
+
+/* Barra de ações do formulário — era `.fi-page .fi-form-actions` no Filament 3.
+   No Filament 5 o rodapé do formulário é o contêiner `*.form-actions`. */
+[id$='form-actions'] {
+    @apply sticky bottom-0 right-0 p-2 pb-4 bg-gray-50 dark:bg-gray-950 border-t border-gray-200 dark:border-gray-700;
+}
