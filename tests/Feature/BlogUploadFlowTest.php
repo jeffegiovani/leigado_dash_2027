@@ -1,6 +1,6 @@
 <?php
 
-use App\Filament\Dash\Resources\BlogResource\Pages\CreateBlog;
+use App\Filament\Dash\Resources\Blogs\Pages\CreateBlog;
 use App\Models\Blog;
 use App\Models\BlogCategory;
 use App\Models\User;

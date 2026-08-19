@@ -3,12 +3,12 @@
 namespace App\Providers\Filament;
 
 use App\Filament\Dash\Pages\Dashboard;
-use App\Filament\Dash\Resources\BlogResource\Widgets\BlogArticlesCountWidget;
-use App\Filament\Dash\Resources\CouponResource\Widgets\CouponsCountWidget;
-use App\Filament\Dash\Resources\FaqResource\Widgets\FaqCountWidget;
-use App\Filament\Dash\Resources\JobResource\Widgets\JobsCountWidget;
-use App\Filament\Dash\Resources\SiteContactResource\Widgets\SiteContactsCountWidget;
-use App\Filament\Dash\Resources\SuccessCaseResource\Widgets\SuccessCasesCountWidget;
+use App\Filament\Dash\Resources\Blogs\Widgets\BlogArticlesCountWidget;
+use App\Filament\Dash\Resources\Coupons\Widgets\CouponsCountWidget;
+use App\Filament\Dash\Resources\Faqs\Widgets\FaqCountWidget;
+use App\Filament\Dash\Resources\Jobs\Widgets\JobsCountWidget;
+use App\Filament\Dash\Resources\SiteContacts\Widgets\SiteContactsCountWidget;
+use App\Filament\Dash\Resources\SuccessCases\Widgets\SuccessCasesCountWidget;
 use App\Filament\Dash\Widgets\AccountWidget;
 use App\Models\User;
 use BezhanSalleh\FilamentShield\FilamentShieldPlugin;
