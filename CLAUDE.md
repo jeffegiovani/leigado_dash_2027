@@ -159,3 +159,7 @@ This project has domain-specific skills available in `**/skills/**`. You MUST ac
 - Do NOT delete tests without approval.
 
 </laravel-boost-guidelines>
+
+## Git
+
+- Mensagens de commit NUNCA devem conter o trailer `Co-Authored-By:` (incluindo `Co-Authored-By: Claude <noreply@anthropic.com>`) nem linhas de atribuição como "Generated with Claude Code". O histórico deve constar apenas com o autor humano.
