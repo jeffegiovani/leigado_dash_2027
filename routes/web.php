@@ -1,5 +1,5 @@
 <?php
 
-use Illuminate\Support\Facades\Route;
-
-Route::view('/', 'welcome')->name('home');
+/*
+ * O painel Filament (DashPanelProvider) ocupa a raiz do domínio.
+ */

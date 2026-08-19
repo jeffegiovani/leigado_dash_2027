@@ -2,11 +2,12 @@
 
 namespace App\Providers;
 
-use Carbon\CarbonImmutable;
-use Illuminate\Support\Facades\Date;
-use Illuminate\Support\Facades\DB;
+use BezhanSalleh\FilamentShield\Facades\FilamentShield;
+use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Facades\Schema;
 use Illuminate\Support\ServiceProvider;
-use Illuminate\Validation\Rules\Password;
+use Spatie\Health\Checks\Checks;
+use Spatie\Health\Facades\Health;
 
 class AppServiceProvider extends ServiceProvider
 {
@@ -23,28 +24,18 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot(): void
     {
-        $this->configureDefaults();
-    }
+        Schema::defaultStringLength(191);
+        Model::unguard();
 
-    /**
-     * Configure default behaviors for production-ready applications.
-     */
-    protected function configureDefaults(): void
-    {
-        Date::use(CarbonImmutable::class);
+        Health::checks([
+            Checks\CacheCheck::new(),
+            Checks\DatabaseCheck::new(),
+            Checks\DatabaseConnectionCountCheck::new(),
+            Checks\DebugModeCheck::new(),
+            Checks\EnvironmentCheck::new(),
+            Checks\OptimizedAppCheck::new(),
+        ]);
 
-        DB::prohibitDestructiveCommands(
-            app()->isProduction(),
-        );
-
-        Password::defaults(fn (): ?Password => app()->isProduction()
-            ? Password::min(12)
-                ->mixedCase()
-                ->letters()
-                ->numbers()
-                ->symbols()
-                ->uncompromised()
-            : null,
-        );
+        FilamentShield::prohibitDestructiveCommands($this->app->isProduction());
     }
 }
