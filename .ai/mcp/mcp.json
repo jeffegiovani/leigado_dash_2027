@@ -1,0 +1,11 @@
+{
+  "mcpServers": {
+    "laravel-boost": {
+      "command": "/Users/jeffegiovani/Library/PhpWebStudy/app/static-php-8.4.23/bin/php",
+      "args": [
+        "/Users/jeffegiovani/WebApps/leigado_dash_2027/artisan",
+        "boost:mcp"
+      ]
+    }
+  }
+}
