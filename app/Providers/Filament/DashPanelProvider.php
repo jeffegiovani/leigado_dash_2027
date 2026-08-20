@@ -15,6 +15,7 @@ use BezhanSalleh\FilamentShield\FilamentShieldPlugin;
 use DiogoGPinto\AuthUIEnhancer\AuthUIEnhancerPlugin;
 use DutchCodingCompany\FilamentDeveloperLogins\FilamentDeveloperLoginsPlugin;
 use Filament\Actions\Action;
+use Filament\Contracts\Plugin;
 use Filament\Enums\ThemeMode;
 use Filament\Http\Middleware\Authenticate;
 use Filament\Http\Middleware\AuthenticateSession;
@@ -142,9 +143,7 @@ class DashPanelProvider extends PanelProvider
 
                 AuthUIEnhancerPlugin::make(),
 
-                FilamentDeveloperLoginsPlugin::make()
-                    ->users(fn (): array => User::pluck('email', 'name')->toArray())
-                    ->enabled(app()->environment('local')),
+                ...$this->developerLoginsPlugins(),
 
                 FilamentEditProfilePlugin::make()
                     ->slug('profile')
@@ -166,5 +165,27 @@ class DashPanelProvider extends PanelProvider
                     ->url(fn (): string => EditProfilePage::getUrl())
                     ->icon('heroicon-m-user-circle'),
             ]);
+    }
+
+    /**
+     * O plugin de login de desenvolvedor é uma dependência de desenvolvimento,
+     * portanto não está disponível em produção (`composer install --no-dev`).
+     *
+     * @return array<int, Plugin>
+     */
+    protected function developerLoginsPlugins(): array
+    {
+        if (! app()->environment('local')) {
+            return [];
+        }
+
+        if (! class_exists(FilamentDeveloperLoginsPlugin::class)) {
+            return [];
+        }
+
+        return [
+            FilamentDeveloperLoginsPlugin::make()
+                ->users(fn (): array => User::pluck('email', 'name')->toArray()),
+        ];
     }
 }
