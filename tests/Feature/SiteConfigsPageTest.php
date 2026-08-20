@@ -27,7 +27,7 @@ it('carrega as opções gravadas no formulário', function () {
             'location' => null,
             'whatsapp_message' => 'Olá!',
             'avatar' => 'volmir.webp',
-            'is_dairy_attendant' => true,
+            'segments' => ['general', 'dairy'],
             'is_active' => true,
         ],
     ]);
@@ -51,7 +51,7 @@ it('grava atendentes e conteúdos legais', function () {
                     'location' => null,
                     'whatsapp_message' => 'Olá, Thalita!',
                     'avatar' => ['0d1c' => 'site-configs/attendants/thalita.webp'],
-                    'is_dairy_attendant' => false,
+                    'segments' => ['general'],
                     'is_active' => true,
                 ],
             ],
@@ -101,7 +101,7 @@ it('apaga o avatar do atendente removido da lista', function () {
             'location' => null,
             'whatsapp_message' => 'Olá!',
             'avatar' => 'site-configs/attendants/removido.webp',
-            'is_dairy_attendant' => false,
+            'segments' => ['general'],
             'is_active' => true,
         ],
         [
@@ -111,7 +111,7 @@ it('apaga o avatar do atendente removido da lista', function () {
             'location' => null,
             'whatsapp_message' => 'Olá!',
             'avatar' => 'site-configs/attendants/mantido.webp',
-            'is_dairy_attendant' => false,
+            'segments' => ['general'],
             'is_active' => true,
         ],
     ]);
@@ -126,7 +126,7 @@ it('apaga o avatar do atendente removido da lista', function () {
                     'location' => null,
                     'whatsapp_message' => 'Olá!',
                     'avatar' => ['0d1c' => 'site-configs/attendants/mantido.webp'],
-                    'is_dairy_attendant' => false,
+                    'segments' => ['general'],
                     'is_active' => true,
                 ],
             ],
@@ -136,4 +136,57 @@ it('apaga o avatar do atendente removido da lista', function () {
 
     Storage::disk('public')->assertMissing('site-configs/attendants/removido.webp');
     Storage::disk('public')->assertExists('site-configs/attendants/mantido.webp');
+});
+
+it('converte atendentes do formato antigo e funde os duplicados', function () {
+    $legacy = [
+        [
+            'name' => 'Volmir Pagno',
+            'phone' => '5546999119511',
+            'whatsapp_message' => 'Olá!',
+            'avatar' => 'volmir.webp',
+            'is_dairy_attendant' => true,
+            'is_active' => true,
+        ],
+        [
+            'name' => 'Volmir Pagno',
+            'phone' => '5546999119511',
+            'whatsapp_message' => 'Olá!',
+            'avatar' => 'volmir.webp',
+            'is_dairy_attendant' => false,
+            'is_active' => true,
+        ],
+        [
+            'name' => 'Thalita Guedes',
+            'phone' => '5546999828048',
+            'whatsapp_message' => 'Olá!',
+            'avatar' => 'thalita.webp',
+            'is_dairy_attendant' => false,
+            'is_active' => true,
+        ],
+    ];
+
+    $normalized = SiteConfig::mergeDuplicatedAttendants(
+        SiteConfig::normalizeAttendantSegments($legacy)
+    );
+
+    expect($normalized)->toHaveCount(2)
+        ->and($normalized[0]['name'])->toBe('Volmir Pagno')
+        ->and($normalized[0]['segments'])->toEqualCanonicalizing(['general', 'dairy'])
+        ->and($normalized[0])->not->toHaveKey('is_dairy_attendant')
+        ->and($normalized[1]['segments'])->toBe(['general']);
+});
+
+it('preserva os segmentos de quem já está no formato novo', function () {
+    $current = [
+        [
+            'name' => 'Thalita Guedes',
+            'phone' => '5546999828048',
+            'segments' => ['dairy'],
+            'avatar' => 'site-configs/attendants/thalita.webp',
+            'is_active' => true,
+        ],
+    ];
+
+    expect(SiteConfig::normalizeAttendantSegments($current)[0]['segments'])->toBe(['dairy']);
 });

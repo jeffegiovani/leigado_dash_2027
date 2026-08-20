@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Enums\AttendantSegmentEnum;
 use App\Enums\SiteConfigKeyEnum;
 use Database\Factories\SiteConfigFactory;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -53,6 +54,73 @@ class SiteConfig extends Model
             ->first();
 
         return $config?->value ?? $default;
+    }
+
+    /**
+     * Converte atendentes gravados antes do campo `segments` existir.
+     *
+     * O antigo `is_dairy_attendant` era exclusivo: quem tinha a flag aparecia
+     * somente nas páginas de laticínios, e quem não tinha, somente nas demais.
+     *
+     * @param  mixed  $attendants
+     * @return array<int, array<string, mixed>>
+     */
+    public static function normalizeAttendantSegments($attendants): array
+    {
+        if (! is_array($attendants)) {
+            return [];
+        }
+
+        return collect($attendants)
+            ->filter(fn ($attendant): bool => is_array($attendant))
+            ->map(function (array $attendant): array {
+                if (filled($attendant['segments'] ?? null)) {
+                    unset($attendant['is_dairy_attendant']);
+
+                    return $attendant;
+                }
+
+                $attendant['segments'] = ($attendant['is_dairy_attendant'] ?? false)
+                    ? [AttendantSegmentEnum::Dairy->value]
+                    : [AttendantSegmentEnum::General->value];
+
+                unset($attendant['is_dairy_attendant']);
+
+                return $attendant;
+            })
+            ->values()
+            ->all();
+    }
+
+    /**
+     * Funde registros repetidos do mesmo telefone somando seus segmentos.
+     *
+     * O formato antigo exigia duas entradas para um atendente aparecer nas
+     * páginas gerais e nas de laticínios; com `segments` uma basta.
+     *
+     * Chamado apenas pela migração que introduziu `segments`: no uso normal do
+     * painel dois cadastros com o mesmo telefone são intencionais.
+     *
+     * @param  array<int, array<string, mixed>>  $attendants
+     * @return array<int, array<string, mixed>>
+     */
+    public static function mergeDuplicatedAttendants(array $attendants): array
+    {
+        return collect($attendants)
+            ->groupBy(fn (array $attendant): string => (string) ($attendant['phone'] ?? ''))
+            ->map(function ($group): array {
+                $merged = $group->first();
+
+                $merged['segments'] = $group
+                    ->flatMap(fn (array $attendant): array => $attendant['segments'])
+                    ->unique()
+                    ->values()
+                    ->all();
+
+                return $merged;
+            })
+            ->values()
+            ->all();
     }
 
     /**

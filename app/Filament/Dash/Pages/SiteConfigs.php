@@ -2,6 +2,7 @@
 
 namespace App\Filament\Dash\Pages;
 
+use App\Enums\AttendantSegmentEnum;
 use App\Enums\SiteConfigKeyEnum;
 use App\Filament\Forms\Components\WebpImageUpload;
 use App\Models\SiteConfig;
@@ -37,7 +38,9 @@ class SiteConfigs extends Page
     public function mount(): void
     {
         $this->form->fill([
-            SiteConfigKeyEnum::WhatsappAttendants->value => SiteConfig::valueFor(SiteConfigKeyEnum::WhatsappAttendants, []),
+            SiteConfigKeyEnum::WhatsappAttendants->value => SiteConfig::normalizeAttendantSegments(
+                SiteConfig::valueFor(SiteConfigKeyEnum::WhatsappAttendants, [])
+            ),
             SiteConfigKeyEnum::PrivacyPolicy->value => SiteConfig::valueFor(SiteConfigKeyEnum::PrivacyPolicy),
             SiteConfigKeyEnum::TermsOfUse->value => SiteConfig::valueFor(SiteConfigKeyEnum::TermsOfUse),
         ]);
@@ -136,10 +139,16 @@ class SiteConfigs extends Page
                 Schemas\Components\Group::make()
                     ->columns(1)
                     ->schema([
-                        Forms\Components\Toggle::make('is_dairy_attendant')
-                            ->default(false)
-                            ->hint(new HtmlString('<small>Exibido nas páginas de laticínios</small>'))
-                            ->label('Atendente de Laticínios'),
+                        Forms\Components\CheckboxList::make('segments')
+                            ->options(AttendantSegmentEnum::class)
+                            ->descriptions(collect(AttendantSegmentEnum::cases())
+                                ->mapWithKeys(fn (AttendantSegmentEnum $segment): array => [
+                                    $segment->value => $segment->getDescription(),
+                                ])
+                                ->all())
+                            ->required()
+                            ->default(AttendantSegmentEnum::defaults())
+                            ->label('Aparece em'),
 
                         Forms\Components\Toggle::make('is_active')
                             ->default(true)

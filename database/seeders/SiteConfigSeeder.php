@@ -2,6 +2,7 @@
 
 namespace Database\Seeders;
 
+use App\Enums\AttendantSegmentEnum;
 use App\Enums\SiteConfigKeyEnum;
 use App\Models\SiteConfig;
 use Illuminate\Database\Seeder;
@@ -23,7 +24,7 @@ class SiteConfigSeeder extends Seeder
     /**
      * Atendentes portados do `config/leigado.php` do portal.
      *
-     * @return array<int, array{name: string, phone: string, phone_formatted: string, location: ?string, whatsapp_message: string, avatar: string, is_dairy_attendant: bool, is_active: bool}>
+     * @return array<int, array{name: string, phone: string, phone_formatted: string, location: ?string, whatsapp_message: string, avatar: string, segments: array<int, string>, is_active: bool}>
      */
     protected function attendants(): array
     {
@@ -34,18 +35,8 @@ class SiteConfigSeeder extends Seeder
                 'phone_formatted' => '+55 46 9 9911 9511',
                 'location' => null,
                 'whatsapp_message' => 'Olá, Volmir! Tudo bem? Gostaria de saber mais sobre as soluções da Leigado',
-                'avatar' => 'volmir.webp',
-                'is_dairy_attendant' => true,
-                'is_active' => true,
-            ],
-            [
-                'name' => 'Volmir Pagno',
-                'phone' => '5546999119511',
-                'phone_formatted' => '+55 46 9 9911 9511',
-                'location' => null,
-                'whatsapp_message' => 'Olá, Volmir! Tudo bem? Gostaria de saber mais sobre as soluções da Leigado',
-                'avatar' => 'volmir.webp',
-                'is_dairy_attendant' => false,
+                'avatar' => 'site-configs/attendants/volmir.webp',
+                'segments' => [AttendantSegmentEnum::General->value, AttendantSegmentEnum::Dairy->value],
                 'is_active' => true,
             ],
             [
@@ -54,8 +45,8 @@ class SiteConfigSeeder extends Seeder
                 'phone_formatted' => '+55 46 9 9982 8048',
                 'location' => null,
                 'whatsapp_message' => 'Olá, Thalita! Tudo bem? Gostaria de saber mais sobre as soluções da Leigado',
-                'avatar' => 'thalita.webp',
-                'is_dairy_attendant' => false,
+                'avatar' => 'site-configs/attendants/thalita.webp',
+                'segments' => [AttendantSegmentEnum::General->value],
                 'is_active' => true,
             ],
         ];
