@@ -3,6 +3,7 @@
 namespace App\Models;
 
 // use Illuminate\Contracts\Auth\MustVerifyEmail;
+use App\Models\Concerns\DeletesManagedImages;
 use Database\Factories\UserFactory;
 use Filament\Models\Contracts\FilamentUser;
 use Filament\Models\Contracts\HasAvatar;
@@ -14,6 +15,8 @@ use Spatie\Permission\Traits\HasRoles;
 
 class User extends Authenticatable implements FilamentUser, HasAvatar
 {
+    use DeletesManagedImages;
+
     /** @use HasFactory<UserFactory> */
     use HasFactory;
 
@@ -66,5 +69,13 @@ class User extends Authenticatable implements FilamentUser, HasAvatar
         }
 
         return 'https://ui-avatars.com/api/?background=041e42&color=fff&name=EU&bold=true';
+    }
+
+    /**
+     * @return array<int, string>
+     */
+    public function managedImageAttributes(): array
+    {
+        return ['avatar_url'];
     }
 }

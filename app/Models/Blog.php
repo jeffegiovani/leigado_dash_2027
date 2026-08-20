@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use App\Enums\ResourceVisibilityEnum;
+use App\Models\Concerns\DeletesManagedImages;
 use Database\Factories\BlogFactory;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
@@ -11,6 +12,8 @@ use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 
 class Blog extends Model
 {
+    use DeletesManagedImages;
+
     /** @use HasFactory<BlogFactory> */
     use HasFactory;
 
@@ -39,5 +42,13 @@ class Blog extends Model
     public function categories(): BelongsToMany
     {
         return $this->belongsToMany(BlogCategory::class, 'blog_has_category', 'article_id', 'category_id');
+    }
+
+    /**
+     * @return array<int, string>
+     */
+    public function managedImageAttributes(): array
+    {
+        return ['thumb', 'cover'];
     }
 }

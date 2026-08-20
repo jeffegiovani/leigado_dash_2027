@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use App\Enums\ResourceVisibilityEnum;
+use App\Models\Concerns\DeletesManagedImages;
 use Database\Factories\CouponFactory;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
@@ -10,6 +11,8 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class Coupon extends Model
 {
+    use DeletesManagedImages;
+
     /** @use HasFactory<CouponFactory> */
     use HasFactory;
 
@@ -33,5 +36,13 @@ class Coupon extends Model
     public function author(): BelongsTo
     {
         return $this->belongsTo(User::class, 'author_id');
+    }
+
+    /**
+     * @return array<int, string>
+     */
+    public function managedImageAttributes(): array
+    {
+        return ['avatar', 'cover'];
     }
 }

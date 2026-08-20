@@ -3,12 +3,15 @@
 namespace App\Models;
 
 use App\Enums\ResourceVisibilityEnum;
+use App\Models\Concerns\DeletesManagedImages;
 use Database\Factories\SuccessCaseFactory;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
 class SuccessCase extends Model
 {
+    use DeletesManagedImages;
+
     /** @use HasFactory<SuccessCaseFactory> */
     use HasFactory;
 
@@ -28,4 +31,12 @@ class SuccessCase extends Model
         'segments' => 'array',
         'visibility' => ResourceVisibilityEnum::class,
     ];
+
+    /**
+     * @return array<int, string>
+     */
+    public function managedImageAttributes(): array
+    {
+        return ['logotype', 'avatar', 'cover'];
+    }
 }

@@ -7,7 +7,6 @@ use App\Forms\MakeSlugStringTrait;
 use Filament\Actions\DeleteAction;
 use Filament\Actions\ViewAction;
 use Filament\Resources\Pages\EditRecord;
-use Illuminate\Support\Facades\Storage;
 
 class EditCoupon extends EditRecord
 {
@@ -17,13 +16,6 @@ class EditCoupon extends EditRecord
 
     protected function mutateFormDataBeforeSave(array $data): array
     {
-        if ($data['avatar'] != $this->record->avatar) {
-            Storage::disk('public')->delete($this->record->avatar);
-        }
-
-        if ($data['cover'] != $this->record->cover) {
-            Storage::disk('public')->delete($this->record->cover);
-        }
 
         $data['slug'] = self::makeSlugString(
             fullTitle: $data['title'],
@@ -45,16 +37,7 @@ class EditCoupon extends EditRecord
     {
         return [
             ViewAction::make(),
-            DeleteAction::make()
-                ->after(function ($record) {
-                    if (! blank($this->record->avatar)) {
-                        Storage::disk('public')->delete($this->record->avatar);
-                    }
-
-                    if (! blank($this->record->cover)) {
-                        Storage::disk('public')->delete($this->record->cover);
-                    }
-                }),
+            DeleteAction::make(),
         ];
     }
 

@@ -5,6 +5,7 @@ use App\Filament\Dash\Pages\SiteConfigs;
 use App\Models\SiteConfig;
 use App\Models\User;
 use Illuminate\Support\Facades\Gate;
+use Illuminate\Support\Facades\Storage;
 use Livewire\Livewire;
 
 beforeEach(function () {
@@ -85,4 +86,54 @@ it('exige nome, telefone e mensagem do atendente', function () {
         ])
         ->call('save')
         ->assertHasFormErrors();
+});
+
+it('apaga o avatar do atendente removido da lista', function () {
+    Storage::fake('public');
+    Storage::disk('public')->put('site-configs/attendants/removido.webp', 'x');
+    Storage::disk('public')->put('site-configs/attendants/mantido.webp', 'y');
+
+    SiteConfig::store(SiteConfigKeyEnum::WhatsappAttendants, [
+        [
+            'name' => 'Removido',
+            'phone' => '5546999119511',
+            'phone_formatted' => '+55 46 9 9911 9511',
+            'location' => null,
+            'whatsapp_message' => 'Olá!',
+            'avatar' => 'site-configs/attendants/removido.webp',
+            'is_dairy_attendant' => false,
+            'is_active' => true,
+        ],
+        [
+            'name' => 'Mantido',
+            'phone' => '5546999828048',
+            'phone_formatted' => '+55 46 9 9982 8048',
+            'location' => null,
+            'whatsapp_message' => 'Olá!',
+            'avatar' => 'site-configs/attendants/mantido.webp',
+            'is_dairy_attendant' => false,
+            'is_active' => true,
+        ],
+    ]);
+
+    Livewire::test(SiteConfigs::class)
+        ->fillForm([
+            SiteConfigKeyEnum::WhatsappAttendants->value => [
+                [
+                    'name' => 'Mantido',
+                    'phone' => '5546999828048',
+                    'phone_formatted' => '+55 46 9 9982 8048',
+                    'location' => null,
+                    'whatsapp_message' => 'Olá!',
+                    'avatar' => ['0d1c' => 'site-configs/attendants/mantido.webp'],
+                    'is_dairy_attendant' => false,
+                    'is_active' => true,
+                ],
+            ],
+        ])
+        ->call('save')
+        ->assertHasNoFormErrors();
+
+    Storage::disk('public')->assertMissing('site-configs/attendants/removido.webp');
+    Storage::disk('public')->assertExists('site-configs/attendants/mantido.webp');
 });

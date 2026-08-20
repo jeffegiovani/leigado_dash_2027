@@ -12,6 +12,7 @@ use Filament\Notifications\Notification;
 use Filament\Pages\Page;
 use Filament\Schemas;
 use Filament\Schemas\Schema;
+use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\HtmlString;
 
 class SiteConfigs extends Page
@@ -178,13 +179,61 @@ class SiteConfigs extends Page
     {
         $data = $this->form->getState();
 
+        $previousAvatars = self::attendantAvatars(
+            SiteConfig::valueFor(SiteConfigKeyEnum::WhatsappAttendants, [])
+        );
+
         foreach (SiteConfigKeyEnum::cases() as $key) {
             SiteConfig::store($key, $data[$key->value] ?? null);
         }
+
+        $this->deleteOrphanAttendantAvatars(
+            $previousAvatars,
+            self::attendantAvatars($data[SiteConfigKeyEnum::WhatsappAttendants->value] ?? [])
+        );
 
         Notification::make()
             ->success()
             ->title('Opções do site atualizadas')
             ->send();
+    }
+
+    /**
+     * Avatares referenciados por uma lista de atendentes.
+     *
+     * @param  mixed  $attendants
+     * @return array<int, string>
+     */
+    protected static function attendantAvatars($attendants): array
+    {
+        if (! is_array($attendants)) {
+            return [];
+        }
+
+        return collect($attendants)
+            ->pluck('avatar')
+            // O estado do FileUpload pode vir como array indexado por uuid antes de ser gravado.
+            ->flatMap(fn ($avatar): array => is_array($avatar) ? array_values($avatar) : [$avatar])
+            ->filter(fn ($avatar): bool => is_string($avatar) && filled($avatar))
+            ->unique()
+            ->values()
+            ->all();
+    }
+
+    /**
+     * Remove do disco os avatares que deixaram de ser referenciados.
+     *
+     * @param  array<int, string>  $previousAvatars
+     * @param  array<int, string>  $currentAvatars
+     */
+    protected function deleteOrphanAttendantAvatars(array $previousAvatars, array $currentAvatars): void
+    {
+        $orphans = array_values(array_diff($previousAvatars, $currentAvatars));
+
+        if ($orphans === []) {
+            return;
+        }
+
+        Storage::disk('public')->delete($orphans);
     }
 }
