@@ -75,13 +75,14 @@ class CouponForm
                                     ->imageEditor()
                                     ->imageEditorMode(2)
                                     // ->imageEditorEmptyFillColor('#000000')
-                                    ->imageResizeMode('cover')
-                                    // ->imageCropAspectRatio('1:1')
+                                    ->automaticallyResizeImagesMode('cover')
+                                    // ->imageAspectRatio('1:1')
+                                    // ->automaticallyCropImagesToAspectRatio()
                                     // ->imageEditorViewportWidth(1280)
                                     // ->imageEditorViewportHeight(720)
-                                    ->imageResizeTargetWidth('160')
-                                    ->imageResizeTargetHeight('160')
-                                    ->imageEditorAspectRatios([
+                                    ->automaticallyResizeImagesToWidth('160')
+                                    ->automaticallyResizeImagesToHeight('160')
+                                    ->imageEditorAspectRatioOptions([
                                         null,
                                     ])
                                     ->optimize('webp')
@@ -94,12 +95,13 @@ class CouponForm
                                     ->imageEditor()
                                     ->imageEditorMode(2)
                                     // ->imageEditorEmptyFillColor('#000000')
-                                    ->imageResizeMode('cover')
-                                    ->imageCropAspectRatio('8:3')
+                                    ->automaticallyResizeImagesMode('cover')
+                                    ->imageAspectRatio('8:3')
+                                    ->automaticallyCropImagesToAspectRatio()
                                     ->imageEditorViewportWidth(900)
                                     ->imageEditorViewportHeight(338)
-                                    ->imageResizeTargetWidth('900')
-                                    ->imageResizeTargetHeight('338')
+                                    ->automaticallyResizeImagesToWidth('900')
+                                    ->automaticallyResizeImagesToHeight('338')
                                     ->optimize('webp')
                                     ->label('Capa da Campanha'),
                             ]),

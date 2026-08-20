@@ -27,9 +27,9 @@ class UserForm
                             ->directory('avatars')
                             ->imageEditor()
                             ->imageEditorMode(2)
-                            ->imageResizeMode('cover')
-                            ->imageResizeTargetWidth('120')
-                            ->imageResizeTargetHeight('120')
+                            ->automaticallyResizeImagesMode('cover')
+                            ->automaticallyResizeImagesToWidth('120')
+                            ->automaticallyResizeImagesToHeight('120')
                             ->optimize('webp')
                             ->label('Avatar'),
 

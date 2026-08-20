@@ -52,3 +52,38 @@ it('não reconverte SVG', function () {
 
     expect($component->shouldOptimize($file))->toBeFalse();
 });
+
+it('redimensiona no servidor quando o campo pede', function () {
+    Storage::fake('public');
+
+    $component = WebpImageUpload::make('avatar')
+        ->disk('public')
+        ->directory('site-configs/attendants')
+        ->automaticallyResizeImagesMode('cover')
+        ->automaticallyResizeImagesToWidth('96')
+        ->automaticallyResizeImagesToHeight('96')
+        ->resizeOnServer();
+
+    $path = $component->storeOptimizedFile(temporaryUpload(UploadedFile::fake()->image('gigante.jpg', 2400, 1600)));
+
+    [$width, $height] = getimagesizefromstring(Storage::disk('public')->get($path));
+
+    expect($width)->toBe(96)->and($height)->toBe(96);
+});
+
+it('mantém as dimensões originais quando o resize no servidor não é pedido', function () {
+    Storage::fake('public');
+
+    $component = WebpImageUpload::make('cover')
+        ->disk('public')
+        ->directory('blog/covers')
+        ->automaticallyResizeImagesMode('cover')
+        ->automaticallyResizeImagesToWidth('405')
+        ->automaticallyResizeImagesToHeight('135');
+
+    $path = $component->storeOptimizedFile(temporaryUpload(UploadedFile::fake()->image('capa.jpg', 800, 600)));
+
+    [$width, $height] = getimagesizefromstring(Storage::disk('public')->get($path));
+
+    expect($width)->toBe(800)->and($height)->toBe(600);
+});

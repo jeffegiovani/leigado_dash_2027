@@ -37,13 +37,15 @@ class SiteConfigs extends Page
 
     public function mount(): void
     {
-        $this->form->fill([
-            SiteConfigKeyEnum::WhatsappAttendants->value => SiteConfig::normalizeAttendantSegments(
-                SiteConfig::valueFor(SiteConfigKeyEnum::WhatsappAttendants, [])
-            ),
-            SiteConfigKeyEnum::PrivacyPolicy->value => SiteConfig::valueFor(SiteConfigKeyEnum::PrivacyPolicy),
-            SiteConfigKeyEnum::TermsOfUse->value => SiteConfig::valueFor(SiteConfigKeyEnum::TermsOfUse),
-        ]);
+        $this
+            ->form
+            ->fill([
+                SiteConfigKeyEnum::WhatsappAttendants->value => SiteConfig::normalizeAttendantSegments(
+                    SiteConfig::valueFor(SiteConfigKeyEnum::WhatsappAttendants, [])
+                ),
+                SiteConfigKeyEnum::PrivacyPolicy->value => SiteConfig::valueFor(SiteConfigKeyEnum::PrivacyPolicy),
+                SiteConfigKeyEnum::TermsOfUse->value => SiteConfig::valueFor(SiteConfigKeyEnum::TermsOfUse),
+            ]);
     }
 
     public function form(Schema $schema): Schema
@@ -129,10 +131,12 @@ class SiteConfigs extends Page
                     ->directory('site-configs/attendants')
                     ->imageEditor()
                     ->imageEditorMode(2)
-                    ->imageResizeMode('cover')
-                    ->imageCropAspectRatio('1:1')
-                    ->imageResizeTargetWidth('96')
-                    ->imageResizeTargetHeight('96')
+                    ->imageAspectRatio('1:1')
+                    ->automaticallyCropImagesToAspectRatio()
+                    ->automaticallyResizeImagesMode('cover')
+                    ->automaticallyResizeImagesToWidth('96')
+                    ->automaticallyResizeImagesToHeight('96')
+                    ->resizeOnServer()
                     ->optimize('webp')
                     ->label('Foto'),
 
@@ -186,7 +190,9 @@ class SiteConfigs extends Page
 
     public function save(): void
     {
-        $data = $this->form->getState();
+        $data = $this
+            ->form
+            ->getState();
 
         $previousAvatars = self::attendantAvatars(
             SiteConfig::valueFor(SiteConfigKeyEnum::WhatsappAttendants, [])
