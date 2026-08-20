@@ -33,6 +33,9 @@ class WebpImageUpload extends FileUpload
 
         $this->image();
 
+        /** Todo o restante da aplicação lê e apaga estas imagens no disco `public`. */
+        $this->disk('public');
+
         $this->getUploadedFileNameForStorageUsing(
             static function (WebpImageUpload $component, TemporaryUploadedFile $file): string {
                 $extension = $component->shouldOptimize($file)
