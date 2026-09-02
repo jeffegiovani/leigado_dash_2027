@@ -58,18 +58,21 @@ class SiteConfigs extends Page
                     ->persistTabInQueryString()
                     ->tabs([
                         Schemas\Components\Tabs\Tab::make(SiteConfigKeyEnum::WhatsappAttendants->getLabel())
+                            ->key('atendentes', isInheritable: false)
                             ->icon('heroicon-o-chat-bubble-left-right')
                             ->schema([
                                 self::whatsappAttendantsField(),
                             ]),
 
                         Schemas\Components\Tabs\Tab::make(SiteConfigKeyEnum::PrivacyPolicy->getLabel())
+                            ->key('privacidade', isInheritable: false)
                             ->icon('heroicon-o-shield-check')
                             ->schema([
                                 self::legalContentField(SiteConfigKeyEnum::PrivacyPolicy),
                             ]),
 
                         Schemas\Components\Tabs\Tab::make(SiteConfigKeyEnum::TermsOfUse->getLabel())
+                            ->key('contrato-de-adesao', isInheritable: false)
                             ->icon('heroicon-o-document-text')
                             ->schema([
                                 self::legalContentField(SiteConfigKeyEnum::TermsOfUse),

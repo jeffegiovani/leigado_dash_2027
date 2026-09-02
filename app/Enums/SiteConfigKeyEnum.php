@@ -15,7 +15,7 @@ enum SiteConfigKeyEnum: string implements HasLabel
         return match ($this) {
             self::WhatsappAttendants => 'Atendentes do WhatsApp',
             self::PrivacyPolicy => 'Política de Privacidade',
-            self::TermsOfUse => 'Termos de Uso',
+            self::TermsOfUse => 'Contrato de Adesão',
         };
     }
 
@@ -27,7 +27,7 @@ enum SiteConfigKeyEnum: string implements HasLabel
         return match ($this) {
             self::WhatsappAttendants => 'Atendentes exibidos na WhatsApp Bubble do site',
             self::PrivacyPolicy => 'Conteúdo da página de política de privacidade do site',
-            self::TermsOfUse => 'Conteúdo da página de termos de uso do site',
+            self::TermsOfUse => 'Conteúdo da página de contrato de adesão do site',
         };
     }
 }
